@@ -1,3 +1,3 @@
 # pomodoro
 
-A timer based on the Pomodoro technique
+A timer based on the Pomodoro technique 🍅
