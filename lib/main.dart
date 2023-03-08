@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:pomodoro/colors.dart';
+import 'package:pomodoro/state.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const PomodoroTimer());
@@ -19,7 +21,9 @@ class PomodoroTimer extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: ChangeNotifierProvider(
+          create: (context) => AppState(page: CurrentPage.pomodoro),
+          child: HomePage()),
     );
   }
 }
@@ -81,46 +85,53 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: AnimatedContainer(
-        curve: Curves.fastOutSlowIn,
-        decoration: BoxDecoration(
-            color: AppColors.backgroundDim,
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(35), topRight: Radius.circular(35))),
-        duration: const Duration(seconds: 1),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    padding: const EdgeInsets.only(
-                        top: 10, bottom: 10, left: 30, right: 30),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(40)),
-                      color: Colors.transparent,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CountdownTimer(),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
-                    ))
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            // const Text('inspired by pomofocus.io', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold))
-          ],
+      child: Consumer<AppState>(
+        builder: (context, page, child) => AnimatedContainer(
+          curve: Curves.fastOutSlowIn,
+          decoration: BoxDecoration(
+              color: page.backgroundColor,
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(35), topRight: Radius.circular(35))),
+          duration: const Duration(seconds: 1),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                      duration: const Duration(seconds: 1),
+                      curve: Curves.fastOutSlowIn,
+
+
+                      padding: const EdgeInsets.only(
+                          top: 10, bottom: 10, left: 30, right: 30),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(40)),
+                        color: page.containerColor,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CountdownTimer(),
+                          SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      ))
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              // const Text('inspired by pomofocus.io', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold))
+            ],
+          ),
         ),
       ),
     );
@@ -159,43 +170,53 @@ class _CountdownTimerState extends State<CountdownTimer> {
         remainingMinutes = initialTime.inMinutes;
         remainingSeconds = initialTime.inSeconds.remainder(60);
       }
-      log('${(remainingMinutes < 10)? '0': null} $remainingMinutes:${(remainingSeconds < 10)? '0': null}$remainingSeconds', name: 'time');
+      log('${(remainingMinutes < 10) ? '0' : null} $remainingMinutes:${(remainingSeconds < 10) ? '0' : null}$remainingSeconds',
+          name: 'time');
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 10.0),
-          child: Text(
-            '${(remainingMinutes < 10)? '0': ''} $remainingMinutes:${(remainingSeconds < 10)? '0': ''}$remainingSeconds',
-            style: const TextStyle(
-                color: Colors.white, fontSize: 90, fontWeight: FontWeight.bold),
-          ),
-        ),
-        GestureDetector(
-          onTap: () => {
-            startTimer()
-          },
-          child: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              color: Colors.white,
-            ),
-            padding: const EdgeInsets.all(10),
-            child: const Text(
-              'START',
-              style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 20,
+    return Consumer<AppState>(
+      builder: (context, page, child) => Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: Text(
+              '${(remainingMinutes < 10) ? '0' : ''} $remainingMinutes:${(remainingSeconds < 10) ? '0' : ''}$remainingSeconds',
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 90,
                   fontWeight: FontWeight.bold),
             ),
           ),
-        ),
-      ],
+          GestureDetector(
+            onTap: () {
+              startTimer();
+              if (page.page == CurrentPage.pomodoro) {
+                page.changeTheme(CurrentPage.timerRunning);
+              }
+              else {
+                page.changeTheme(CurrentPage.pomodoro);
+              }
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                color: Colors.white,
+              ),
+              padding: const EdgeInsets.all(10),
+              child: const Text(
+                'START',
+                style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
