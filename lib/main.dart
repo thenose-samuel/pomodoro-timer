@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pomodoro/colors.dart';
 
 void main() {
   runApp(const PomodoroTimer());
@@ -80,11 +81,13 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
+      child: AnimatedContainer(
+        curve: Curves.fastOutSlowIn,
         decoration: BoxDecoration(
-            color: Colors.red[400],
+            color: AppColors.backgroundDim,
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(35), topRight: Radius.circular(35))),
+        duration: const Duration(seconds: 1),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -100,29 +103,12 @@ class Body extends StatelessWidget {
                         top: 10, bottom: 10, left: 30, right: 30),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(40)),
-                      color: Colors.red[300],
+                      color: Colors.transparent,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CountdownTimer(),
-                        GestureDetector(
-                          onTap: () => {},
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              color: Colors.white,
-                            ),
-                            padding: const EdgeInsets.all(10),
-                            child: const Text(
-                              'START',
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
                         SizedBox(
                           height: 20,
                         )
@@ -154,7 +140,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
   late int remainingMinutes = initialTime.inMinutes;
   @override
   void initState() {
-    startTimer();
+    // startTimer();
     super.initState();
   }
 
@@ -180,13 +166,36 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10.0),
-      child: Text(
-        '${(remainingMinutes < 10)? '0': ''} $remainingMinutes:${(remainingSeconds < 10)? '0': ''}$remainingSeconds',
-        style: const TextStyle(
-            color: Colors.white, fontSize: 90, fontWeight: FontWeight.bold),
-      ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 10.0),
+          child: Text(
+            '${(remainingMinutes < 10)? '0': ''} $remainingMinutes:${(remainingSeconds < 10)? '0': ''}$remainingSeconds',
+            style: const TextStyle(
+                color: Colors.white, fontSize: 90, fontWeight: FontWeight.bold),
+          ),
+        ),
+        GestureDetector(
+          onTap: () => {
+            startTimer()
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              color: Colors.white,
+            ),
+            padding: const EdgeInsets.all(10),
+            child: const Text(
+              'START',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
