@@ -21,9 +21,11 @@ class PomodoroTimer extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: ChangeNotifierProvider(
-          create: (context) => AppState(page: CurrentPage.pomodoro),
-          child: HomePage()),
+      home: MultiProvider(providers: [
+        ChangeNotifierProvider(
+            create: (context) => AppState(page: CurrentPage.pomodoro)),
+        ChangeNotifierProvider(create: (context) => TimerState()),
+      ], child: HomePage()),
     );
   }
 }
@@ -95,7 +97,32 @@ class Body extends StatelessWidget {
           duration: const Duration(seconds: 1),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                Text('Pomodoro',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20)),
+                GestureDetector(
+                    onTap: () => {
+
+                    },
+                    child: Text('Short Break',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                            fontSize: 20))),
+                Text('Long Break',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        fontSize: 20)),
+              ]),
               const SizedBox(
                 height: 20,
               ),
@@ -106,8 +133,6 @@ class Body extends StatelessWidget {
                   AnimatedContainer(
                       duration: const Duration(seconds: 1),
                       curve: Curves.fastOutSlowIn,
-
-
                       padding: const EdgeInsets.only(
                           top: 10, bottom: 10, left: 30, right: 30),
                       decoration: BoxDecoration(
@@ -145,36 +170,6 @@ class CountdownTimer extends StatefulWidget {
 }
 
 class _CountdownTimerState extends State<CountdownTimer> {
-  Timer? countDownTimer;
-  Duration initialTime = const Duration(minutes: 25);
-  late int remainingSeconds = initialTime.inSeconds.remainder(60);
-  late int remainingMinutes = initialTime.inMinutes;
-  @override
-  void initState() {
-    // startTimer();
-    super.initState();
-  }
-
-  void startTimer() {
-    countDownTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => countDown());
-  }
-
-  void countDown() {
-    setState(() {
-      final seconds = initialTime.inSeconds - 1;
-      if (seconds < 0) {
-        countDownTimer!.cancel();
-      } else {
-        initialTime = Duration(seconds: seconds);
-        remainingMinutes = initialTime.inMinutes;
-        remainingSeconds = initialTime.inSeconds.remainder(60);
-      }
-      log('${(remainingMinutes < 10) ? '0' : null} $remainingMinutes:${(remainingSeconds < 10) ? '0' : null}$remainingSeconds',
-          name: 'time');
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AppState>(
@@ -182,36 +177,44 @@ class _CountdownTimerState extends State<CountdownTimer> {
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: Text(
-              '${(remainingMinutes < 10) ? '0' : ''} $remainingMinutes:${(remainingSeconds < 10) ? '0' : ''}$remainingSeconds',
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 90,
-                  fontWeight: FontWeight.bold),
+            child: Consumer<TimerState>(
+              builder: (context, timer, child) => Text(
+                '${(timer.remainingMinutes < 10) ? '0' : ''} ${timer.remainingMinutes}:${(timer.remainingSeconds < 10) ? '0' : ''}${timer.remainingSeconds}',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 90,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              startTimer();
-              if (page.page == CurrentPage.pomodoro) {
-                page.changeTheme(CurrentPage.timerRunning);
-              }
-              else {
-                page.changeTheme(CurrentPage.pomodoro);
-              }
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                color: Colors.white,
-              ),
-              padding: const EdgeInsets.all(10),
-              child: const Text(
-                'START',
-                style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+          Consumer<TimerState>(
+            builder: (context, timer, child) => GestureDetector(
+              onTap: () {
+                if (!timer.timerRunning) {
+                  timer.startTimer();
+                } else {
+                  timer.pause(pause: true);
+                }
+                if (page.page == CurrentPage.pomodoro) {
+                  page.changeTheme(CurrentPage.timerRunning);
+                } else {
+                  page.changeTheme(CurrentPage.pomodoro);
+                }
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  color: Colors.white,
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Text(
+                  (!timer.timerRunning) ? 'START' : 'PAUSE',
+                  style: TextStyle(
+                      color:
+                          (!timer.timerRunning) ? Colors.red : Colors.black87,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ),

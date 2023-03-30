@@ -6,5 +6,5 @@ class AppColors{
   static const Color backgroundBlue = Color(0xFF38858a);
   static const Color containerRed = Color(0xFFE57373);
   static const Color containerBlue = Color(0xFF4c9196);
-
+  static const Color textDim = Color(0xFFaaaaaa);
 }
