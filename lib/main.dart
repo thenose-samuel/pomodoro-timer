@@ -106,7 +106,7 @@ class Body extends StatelessWidget {
                   onTap: () {
                     timer.pause(pause: true);
                     page.changeTheme(CurrentPage.pomodoro);
-                    timer.setInitialTime(const Duration(minutes: 25));
+                    timer.setInitialTime(const Duration(seconds: 3));
                   },
                   child: Text('Pomodoro',
                       style: TextStyle(
@@ -122,7 +122,7 @@ class Body extends StatelessWidget {
                     onTap: () {
                       timer.pause(pause: true);
                       page.changeTheme(CurrentPage.shortBreak);
-                      timer.setInitialTime(const Duration(minutes: 5));
+                      timer.setInitialTime(const Duration(seconds: 3));
                     },
                     child: Text('Short Break',
                         style: TextStyle(
@@ -137,7 +137,7 @@ class Body extends StatelessWidget {
                   onTap: () {
                     timer.pause(pause: true);
                     page.changeTheme(CurrentPage.longBreak);
-                    timer.setInitialTime(const Duration(minutes: 15));
+                    timer.setInitialTime(const Duration(seconds: 3));
                   },
                   child: Text('Long Break',
                       style: TextStyle(
@@ -200,15 +200,23 @@ class _CountdownTimerState extends State<CountdownTimer> {
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: Consumer<TimerState>(
-              builder: (context, timer, child) => Text(
+            child: Consumer<TimerState>(builder: (context, timer, child) {
+              // if (timer.initialTime.inSeconds == 0) {
+              //   if (timer.currentPomodoro % 4 == 0) {
+              //     page.changeTheme(CurrentPage.longBreak);
+              //   } else {
+              //     page.changeTheme(CurrentPage.shortBreak);
+              //   }
+              //   return const Text('');
+              // }
+              return Text(
                 '${(timer.remainingMinutes < 10) ? '0' : ''}${timer.remainingMinutes}:${(timer.remainingSeconds < 10) ? '0' : ''}${timer.remainingSeconds}',
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 90,
                     fontWeight: FontWeight.bold),
-              ),
-            ),
+              );
+            }),
           ),
           Consumer<TimerState>(
             builder: (context, timer, child) => GestureDetector(
@@ -217,7 +225,7 @@ class _CountdownTimerState extends State<CountdownTimer> {
                   // if (page.page == CurrentPage.shortBreak) {
                   //   timer.initialTime = const Duration(minutes: 5);
                   // }
-                  timer.startTimer();
+                  timer.startTimer(appState: page, timerState: timer);
                 } else {
                   timer.pause(pause: true);
                 }

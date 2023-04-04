@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:pomodoro/colors.dart';
 import 'package:flutter/material.dart';
@@ -60,10 +61,11 @@ class AppState extends ChangeNotifier {
 
 class TimerState extends ChangeNotifier {
   Timer? countDownTimer;
-  Duration initialTime = const Duration(minutes: 25);
+  Duration initialTime = const Duration(seconds: 3);
   late int remainingSeconds = initialTime.inSeconds.remainder(60);
   late int remainingMinutes = initialTime.inMinutes;
   bool timerRunning = false;
+  int currentPomodoro = 0;
 
   void setInitialTime(Duration init) {
     initialTime = init;
@@ -72,10 +74,10 @@ class TimerState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startTimer() {
+  void startTimer({AppState? appState, TimerState? timerState}) {
     timerRunning = true;
-    countDownTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => countDown());
+    countDownTimer = Timer.periodic(const Duration(seconds: 1),
+        (_) => countDown(appState: appState, timerState: timerState));
     notifyListeners();
   }
 
@@ -85,15 +87,32 @@ class TimerState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void countDown() {
+  void countDown({AppState? appState, TimerState? timerState}) {
     final seconds = initialTime.inSeconds - 1;
     if (seconds < 0) {
-      countDownTimer!.cancel();
+      // countDownTimer!.cancel();
+      pause(pause: true);
+      if (appState!.prevPage == CurrentPage.pomodoro) {
+        //log('In to break change', name: 'Timer');
+        currentPomodoro++;
+        log('${currentPomodoro}', name: 'Timer');
+        if (currentPomodoro % 4 == 0 && currentPomodoro != 0) {
+          timerState!.initialTime = const Duration(seconds: 3);
+          appState.changeTheme(CurrentPage.longBreak);
+        } else {
+          log('In to break change', name: 'Timer');
+          timerState!.initialTime = const Duration(seconds: 3);
+          appState.changeTheme(CurrentPage.shortBreak);
+        }
+      } else {
+        timerState!.initialTime = const Duration(seconds: 3);
+        appState.changeTheme(CurrentPage.pomodoro);
+      }
     } else {
       initialTime = Duration(seconds: seconds);
-      remainingMinutes = initialTime.inMinutes;
-      remainingSeconds = initialTime.inSeconds.remainder(60);
     }
+    remainingMinutes = initialTime.inMinutes;
+    remainingSeconds = initialTime.inSeconds.remainder(60);
     notifyListeners();
   }
 }
