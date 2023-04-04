@@ -3,20 +3,23 @@ import 'dart:async';
 import 'package:pomodoro/colors.dart';
 import 'package:flutter/material.dart';
 
-enum CurrentPage { pomodoro, shortBreak, timerRunning }
+enum CurrentPage { pomodoro, shortBreak, timerRunning, longBreak }
 
 class AppState extends ChangeNotifier {
   late CurrentPage page;
   late CurrentPage prevPage;
+
   late Color backgroundColor;
   late Color containerColor;
   late Color startTextColor;
+
   AppState({required this.page}) {
     changeTheme(page);
   }
 
   void changeTheme(CurrentPage page) {
     prevPage = this.page;
+
     if (page == CurrentPage.pomodoro) {
       backgroundColor = AppColors.backgroundRed;
       containerColor = AppColors.containerRed;
@@ -25,6 +28,7 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return;
     }
+
     if (page == CurrentPage.shortBreak) {
       backgroundColor = AppColors.backgroundBlue;
       containerColor = AppColors.containerBlue;
@@ -33,6 +37,16 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return;
     }
+
+    if (page == CurrentPage.longBreak) {
+      backgroundColor = AppColors.backgroundDarkBlue;
+      containerColor = AppColors.containerDarkBlue;
+      startTextColor = Colors.black38;
+      this.page = page;
+      notifyListeners();
+      return;
+    }
+
     if (page == CurrentPage.timerRunning) {
       backgroundColor = AppColors.backgroundDim;
       containerColor = Colors.transparent;
@@ -66,7 +80,7 @@ class TimerState extends ChangeNotifier {
   }
 
   void pause({required bool pause}) {
-    countDownTimer!.cancel();
+    if (countDownTimer != null) countDownTimer!.cancel();
     timerRunning = false;
     notifyListeners();
   }

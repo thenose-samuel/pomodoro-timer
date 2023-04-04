@@ -75,13 +75,6 @@ class TopBar extends StatelessWidget {
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
         ),
-        // Text(
-        //   '25.02.2023',
-        //   style: TextStyle(
-        //       color: Color(0xFF858584),
-        //       fontSize: 15,
-        //       fontWeight: FontWeight.bold),
-        // )
       ],
     );
   }
@@ -121,7 +114,7 @@ class Body extends StatelessWidget {
                           color: page.page == CurrentPage.pomodoro
                               ? Colors.white
                               : Colors.grey,
-                          fontSize: 20)),
+                          fontSize: 16)),
                 ),
               ),
               Consumer<TimerState>(
@@ -137,16 +130,24 @@ class Body extends StatelessWidget {
                             color: page.page == CurrentPage.shortBreak
                                 ? Colors.white
                                 : Colors.grey,
-                            fontSize: 20))),
+                            fontSize: 16))),
               ),
-              // GestureDetector(
-              //   onTap: () => {page.changeTheme(CurrentPage.shortBreak)},
-              //   child: const Text('Long Break',
-              //       style: TextStyle(
-              //           fontWeight: FontWeight.bold,
-              //           color: Colors.grey,
-              //           fontSize: 20)),
-              // ),
+              Consumer<TimerState>(builder: (context, timer, _) {
+                return GestureDetector(
+                  onTap: () {
+                    timer.pause(pause: true);
+                    page.changeTheme(CurrentPage.longBreak);
+                    timer.setInitialTime(const Duration(minutes: 15));
+                  },
+                  child: Text('Long Break',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: page.page == CurrentPage.longBreak
+                              ? Colors.white
+                              : Colors.grey,
+                          fontSize: 16)),
+                );
+              }),
             ]),
             const SizedBox(
               height: 20,
@@ -221,16 +222,17 @@ class _CountdownTimerState extends State<CountdownTimer> {
                   timer.pause(pause: true);
                 }
                 // page.changeTheme(CurrentPage.timerRunning);
-                if (page.page == CurrentPage.shortBreak ||
-                    page.page == CurrentPage.pomodoro) {
-                  page.changeTheme(CurrentPage.timerRunning);
-                  return;
-                } else {
+                if (page.page == CurrentPage.timerRunning) {
                   if (page.prevPage == CurrentPage.pomodoro) {
                     page.changeTheme(CurrentPage.pomodoro);
-                  } else {
+                  } else if (page.page == CurrentPage.shortBreak) {
                     page.changeTheme(CurrentPage.shortBreak);
+                  } else {
+                    page.changeTheme(CurrentPage.longBreak);
                   }
+                } else {
+                  page.changeTheme(CurrentPage.timerRunning);
+                  return;
                 }
               },
               child: Container(
