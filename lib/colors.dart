@@ -12,4 +12,6 @@ class AppColors {
   static const Color startPomodoro = backgroundRed;
   static const Color startShortBreak = backgroundBlue;
   static const Color startLongBreak = backgroundDarkBlue;
+  static const Color taskBarBorder = Colors.grey;
+  static const Color taskBarText = Colors.black26;
 }

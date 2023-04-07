@@ -3,6 +3,8 @@ import 'package:pomodoro/colors.dart';
 import 'package:pomodoro/state.dart';
 import 'package:provider/provider.dart';
 
+import 'components/top-bar.dart';
+
 void main() {
   runApp(const PomodoroTimer());
 }
@@ -50,32 +52,14 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 20,
           ),
-          Text('inspired by pomofocus.io',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold))
+          // Text('inspired by pomofocus.io',
+          //     style: TextStyle(
+          //         color: Colors.white,
+          //         fontSize: 12,
+          //         fontWeight: FontWeight.bold)),
         ],
       ),
-      backgroundColor: const Color(0xFF1a1a1a),
-    );
-  }
-}
-
-class TopBar extends StatelessWidget {
-  const TopBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
-        Text(
-          'Hi, Marjiba',
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
-        ),
-      ],
+      backgroundColor: Colors.white,
     );
   }
 }
