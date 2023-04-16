@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pomodoro/colors.dart';
 import 'package:pomodoro/state.dart';
 import 'package:provider/provider.dart';
+import 'onboarding.dart';
 
 void main() {
   runApp(const PomodoroTimer());
@@ -13,17 +14,18 @@ class PomodoroTimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Timer',
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider(
-            create: (context) => AppState(page: CurrentPage.pomodoro)),
-        ChangeNotifierProvider(create: (context) => TimerState()),
-      ], child: const HomePage()),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Timer',
+        theme: ThemeData(
+          useMaterial3: true,
+        ),
+        home: Onboarding()
+        // MultiProvider(providers: [
+        //   ChangeNotifierProvider(
+        //       create: (context) => AppState(page: CurrentPage.pomodoro)),
+        //   ChangeNotifierProvider(create: (context) => TimerState()),
+        // ], child: const HomePage()),
+        );
   }
 }
 
