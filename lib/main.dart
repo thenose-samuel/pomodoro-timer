@@ -3,8 +3,6 @@ import 'package:pomodoro/colors.dart';
 import 'package:pomodoro/state.dart';
 import 'package:provider/provider.dart';
 
-import 'components/top-bar.dart';
-
 void main() {
   runApp(const PomodoroTimer());
 }
@@ -35,31 +33,22 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: const [
-          SizedBox(
-            height: 70,
+      body: Consumer<AppState>(
+        builder: (context, page, child) => AnimatedContainer(
+          duration: const Duration(seconds: 1),
+          curve: Curves.fastOutSlowIn,
+          color: page.backgroundColor,
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Body(),
+              ),
+            ],
           ),
-          Padding(
-              padding: EdgeInsets.only(left: 15, right: 15), child: TopBar()),
-          SizedBox(
-            height: 40,
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Body(),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          // Text('inspired by pomofocus.io',
-          //     style: TextStyle(
-          //         color: Colors.white,
-          //         fontSize: 12,
-          //         fontWeight: FontWeight.bold)),
-        ],
+        ),
       ),
-      backgroundColor: Colors.white,
     );
   }
 }
@@ -71,7 +60,7 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppState>(
       builder: (context, page, child) => AnimatedContainer(
-        height: 350,
+        height: 500,
         curve: Curves.fastOutSlowIn,
         decoration: BoxDecoration(
             color: page.backgroundColor,
@@ -79,10 +68,41 @@ class Body extends StatelessWidget {
         duration: const Duration(seconds: 1),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const Text('Hi, Sam!',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 40)),
             const SizedBox(
-              height: 20,
+              height: 40,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AnimatedContainer(
+                    duration: const Duration(seconds: 1),
+                    curve: Curves.fastOutSlowIn,
+                    padding: const EdgeInsets.only(
+                        top: 10, bottom: 10, left: 30, right: 30),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(40)),
+                      color: page.containerColor,
+                    ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CountdownTimer(),
+                        SizedBox(
+                          height: 20,
+                        )
+                      ],
+                    ))
+              ],
+            ),
+            const SizedBox(
+              height: 60,
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               Consumer<TimerState>(
@@ -98,7 +118,7 @@ class Body extends StatelessWidget {
                           color: page.page == CurrentPage.pomodoro
                               ? Colors.white
                               : Colors.grey,
-                          fontSize: 16)),
+                          fontSize: 18)),
                 ),
               ),
               Consumer<TimerState>(
@@ -114,7 +134,7 @@ class Body extends StatelessWidget {
                             color: page.page == CurrentPage.shortBreak
                                 ? Colors.white
                                 : Colors.grey,
-                            fontSize: 16))),
+                            fontSize: 18))),
               ),
               Consumer<TimerState>(builder: (context, timer, _) {
                 return GestureDetector(
@@ -129,40 +149,10 @@ class Body extends StatelessWidget {
                           color: page.page == CurrentPage.longBreak
                               ? Colors.white
                               : Colors.grey,
-                          fontSize: 16)),
+                          fontSize: 18)),
                 );
               }),
             ]),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AnimatedContainer(
-                    duration: const Duration(seconds: 1),
-                    curve: Curves.fastOutSlowIn,
-                    padding: const EdgeInsets.only(
-                        top: 10, bottom: 10, left: 30, right: 30),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(40)),
-                      color: page.containerColor,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        CountdownTimer(),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
-                    ))
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
           ],
         ),
       ),
