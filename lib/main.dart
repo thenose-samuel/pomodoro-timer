@@ -4,6 +4,7 @@ import 'package:pomodoro/constants.dart';
 import 'package:pomodoro/onboard.dart';
 import 'package:pomodoro/state.dart';
 import 'package:provider/provider.dart';
+import 'onboarding.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:get_storage/get_storage.dart';
@@ -29,17 +30,18 @@ class PomodoroTimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Timer',
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider(
-            create: (context) => AppState(page: CurrentPage.pomodoro)),
-        ChangeNotifierProvider(create: (context) => TimerState()),
-      ], child: const HomePage()),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Timer',
+        theme: ThemeData(
+          useMaterial3: true,
+        ),
+        home: Onboarding()
+        // MultiProvider(providers: [
+        //   ChangeNotifierProvider(
+        //       create: (context) => AppState(page: CurrentPage.pomodoro)),
+        //   ChangeNotifierProvider(create: (context) => TimerState()),
+        // ], child: const HomePage()),
+        );
   }
 }
 
