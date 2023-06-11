@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:pomodoro/colors.dart';
+import 'package:pomodoro/constants.dart';
+import 'package:pomodoro/onboard.dart';
 import 'package:pomodoro/state.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:get_storage/get_storage.dart';
 
-void main() {
-  runApp(const PomodoroTimer());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await GetStorage.init();
+  final localStorage = GetStorage();
+
+  if (localStorage.read(AppConstants.user) != null) {
+    runApp(const PomodoroTimer());
+  } else {
+    runApp(const Onboard());
+  }
 }
 
 class PomodoroTimer extends StatelessWidget {
