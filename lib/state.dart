@@ -61,7 +61,7 @@ class AppState extends ChangeNotifier {
 
 class TimerState extends ChangeNotifier {
   Timer? countDownTimer;
-  Duration initialTime = const Duration(seconds: 3);
+  Duration initialTime = const Duration(minutes: 25);
   late int remainingSeconds = initialTime.inSeconds.remainder(60);
   late int remainingMinutes = initialTime.inMinutes;
   bool timerRunning = false;
@@ -97,15 +97,15 @@ class TimerState extends ChangeNotifier {
         currentPomodoro++;
         log('${currentPomodoro}', name: 'Timer');
         if (currentPomodoro % 4 == 0 && currentPomodoro != 0) {
-          timerState!.initialTime = const Duration(seconds: 3);
+          timerState!.initialTime = const Duration(minutes: 15);
           appState.changeTheme(CurrentPage.longBreak);
         } else {
           log('In to break change', name: 'Timer');
-          timerState!.initialTime = const Duration(seconds: 3);
+          timerState!.initialTime = const Duration(minutes: 5);
           appState.changeTheme(CurrentPage.shortBreak);
         }
       } else {
-        timerState!.initialTime = const Duration(seconds: 3);
+        timerState!.initialTime = const Duration(minutes: 25);
         appState.changeTheme(CurrentPage.pomodoro);
       }
     } else {

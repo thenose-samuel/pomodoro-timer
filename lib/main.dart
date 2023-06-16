@@ -139,7 +139,7 @@ class Body extends StatelessWidget {
                   onTap: () {
                     timer.pause(pause: true);
                     page.changeTheme(CurrentPage.pomodoro);
-                    timer.setInitialTime(const Duration(seconds: 3));
+                    timer.setInitialTime(const Duration(minutes: 25));
                   },
                   child: Text('Pomodoro',
                       style: TextStyle(
@@ -155,7 +155,7 @@ class Body extends StatelessWidget {
                     onTap: () {
                       timer.pause(pause: true);
                       page.changeTheme(CurrentPage.shortBreak);
-                      timer.setInitialTime(const Duration(seconds: 3));
+                      timer.setInitialTime(const Duration(minutes: 5));
                     },
                     child: Text('Short Break',
                         style: TextStyle(
@@ -170,7 +170,7 @@ class Body extends StatelessWidget {
                   onTap: () {
                     timer.pause(pause: true);
                     page.changeTheme(CurrentPage.longBreak);
-                    timer.setInitialTime(const Duration(seconds: 3));
+                    timer.setInitialTime(const Duration(minutes: 15));
                   },
                   child: Text('Long Break',
                       style: TextStyle(
