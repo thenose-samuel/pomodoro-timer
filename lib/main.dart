@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pomodoro/colors.dart';
 import 'package:pomodoro/constants.dart';
-import 'package:pomodoro/onboard.dart';
 import 'package:pomodoro/state.dart';
+import 'package:pomodoro/user-info.dart';
 import 'package:provider/provider.dart';
+import 'onboarding.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:go_router/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,12 +17,23 @@ void main() async {
   );
   await GetStorage.init();
   final localStorage = GetStorage();
+  final _router = GoRouter(
+      initialLocation:
+          localStorage.read(AppConstants.user) == null ? '/onboard' : '/timer',
+      routes: [
+        GoRoute(path: '/onboard', builder: (context, state) => Onboarding()),
+        GoRoute(path: '/onboard/info', builder: (context, state) => UserInfo()),
+        GoRoute(
+          path: '/timer',
+          builder: (context, state) => MultiProvider(providers: [
+            ChangeNotifierProvider(
+                create: (context) => AppState(page: CurrentPage.pomodoro)),
+            ChangeNotifierProvider(create: (context) => TimerState()),
+          ], child: const PomodoroTimer()),
+        ),
+      ]);
 
-  if (localStorage.read(AppConstants.user) != null) {
-    runApp(const PomodoroTimer());
-  } else {
-    runApp(const Onboard());
-  }
+  runApp(MaterialApp.router(routerConfig: _router));
 }
 
 class PomodoroTimer extends StatelessWidget {
@@ -29,17 +42,18 @@ class PomodoroTimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Timer',
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider(
-            create: (context) => AppState(page: CurrentPage.pomodoro)),
-        ChangeNotifierProvider(create: (context) => TimerState()),
-      ], child: const HomePage()),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Timer',
+        theme: ThemeData(
+          useMaterial3: true,
+        ),
+        home: HomePage()
+        // MultiProvider(providers: [
+        //   ChangeNotifierProvider(
+        //       create: (context) => AppState(page: CurrentPage.pomodoro)),
+        //   ChangeNotifierProvider(create: (context) => TimerState()),
+        // ], child: const HomePage()),
+        );
   }
 }
 
@@ -71,7 +85,6 @@ class HomePage extends StatelessWidget {
 
 class Body extends StatelessWidget {
   const Body({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AppState>(
@@ -85,7 +98,7 @@ class Body extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text('Hi, Sam!',
+            Text('Hi, ${GetStorage().read(AppConstants.user)}!',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
